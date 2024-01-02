@@ -19,7 +19,7 @@ app = FastAPI()
 
 # app.mount("/", StaticFiles(directory="static"), name="static")
 
-cred = open(r'api\creds.json')
+cred = open(rf'{os.getcwd()}\creds.json')
 cred_dict = json.load(cred)
 
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict,
