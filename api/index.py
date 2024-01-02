@@ -19,8 +19,10 @@ app = FastAPI()
 
 # app.mount("/", StaticFiles(directory="static"), name="static")
 
-cred = open(rf'{os.getcwd()}\creds.json')
-cred_dict = json.load(cred)
+# cred = open(rf'{os.getcwd()}\creds.json')
+# cred_dict = json.load(cred)
+print(os.environ.get('CREDS'))
+cred_dict = json.loads(os.environ.get('CREDS'))
 
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict,
                                                                scopes=["https://www.googleapis.com/auth/drive"])
@@ -46,6 +48,7 @@ spreadsheet_id = '1Cj44xd3LXJT2oNkJzb_MPl2Ba9zjTL5vR4c4K8R-nuA'
 
 @app.get("/")
 def hello():
+
     return Response(json.dumps({"message": "Hello"}), 200)
 
 

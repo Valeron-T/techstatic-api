@@ -1,3 +1,5 @@
 venv
 api/*.json
 *.jpg
+.env
+*.pyc
