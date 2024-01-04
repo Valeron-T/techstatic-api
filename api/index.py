@@ -45,7 +45,7 @@ late_couple = Image.open(requests.get(
     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-couple.jpg",
     stream=True).raw)
 ticket = Image.open(requests.get(
-    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/tech-ticket.jpg",
+    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/main/tech-ticket.jpg",
     stream=True).raw)
 
 @app.get("/")
