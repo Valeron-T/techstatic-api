@@ -150,6 +150,36 @@ def getresponses(event_id: str):
     #     print(e)
     #     return {"message": "Invalid ID", "status": 403}
 
+@app.get("/events/{dept}")
+def get_events(dept: str):
+    all_sheets = sheets_service.spreadsheets().get(spreadsheetId=spreadsheet_id).execute()
+    print(all_sheets['sheets'])
+
+    events = []
+    misc = []
+
+    for sheet in all_sheets['sheets']:
+        sheet_id = sheet['properties']['sheetId']
+        sheet_title = sheet['properties']['title']
+        event_json = {
+            "name":sheet_title,
+            "id":sheet_id
+        }
+        try:
+            if str(sheet_title).split("-")[1].strip().casefold() == dept.casefold():
+                events.append(event_json)
+        except IndexError:
+            misc.append(event_json)
+
+    print(events)
+
+    if dept.casefold() == 'misc'.casefold():
+        result = misc
+    else:
+        result = events
+
+    return Response(json.dumps({"message": "API is running", "result": result}), 200)
+
 
 @app.get("/events")
 def get_events():
@@ -167,7 +197,7 @@ def get_events():
         events.append(event_json)
 
     print(events)
-    return {"message": "Events fetched", "result": events, "status": 200}
+    return Response(json.dumps({"message": "API is running", "result": events}), 200)
 
 
 class ColumnData(BaseModel):
