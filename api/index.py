@@ -178,7 +178,7 @@ def get_events(dept: str):
     else:
         result = events
 
-    return Response(json.dumps({"message": "API is running", "result": result}), 200)
+    return Response(json.dumps({"message": "Data Fetched Successfully", "result": result}), 200)
 
 
 @app.get("/events")
@@ -197,7 +197,7 @@ def get_events():
         events.append(event_json)
 
     print(events)
-    return Response(json.dumps({"message": "API is running", "result": events}), 200)
+    return Response(json.dumps({"message": "Data Fetched Successfully", "result": events}), 200)
 
 
 class ColumnData(BaseModel):
