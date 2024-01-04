@@ -32,18 +32,18 @@ sheets_service = build('sheets', 'v4', credentials=credentials)
 
 spreadsheet_id = '1Cj44xd3LXJT2oNkJzb_MPl2Ba9zjTL5vR4c4K8R-nuA'
 
-# early_stag = Image.open(requests.get(
-#     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-stag.jpg",
-#     stream=True).raw)
-# early_couple = Image.open(requests.get(
-#     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-couple.jpg",
-#     stream=True).raw)
-# late_stag = Image.open(requests.get(
-#     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-stag.jpg",
-#     stream=True).raw)
-# late_couple = Image.open(requests.get(
-#     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-couple.jpg",
-#     stream=True).raw)
+early_stag = Image.open(requests.get(
+    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-stag.jpg",
+    stream=True).raw)
+early_couple = Image.open(requests.get(
+    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-couple.jpg",
+    stream=True).raw)
+late_stag = Image.open(requests.get(
+    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-stag.jpg",
+    stream=True).raw)
+late_couple = Image.open(requests.get(
+    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-couple.jpg",
+    stream=True).raw)
 
 
 @app.get("/")
@@ -56,35 +56,31 @@ def hello():
 def hello():
     return Response(json.dumps({"message": "API is running"}), 200)
 
-#
-# @app.get("/generate-qr/normal")
-# def new_qr(response_id: str, ticket_type: str):
-#     print(os.getcwd())
-#     try:
-#         qr = qrcode.QRCode(box_size=14)
-#         qr_string = response_id
-#         img = late_stag
-#         if ticket_type == "Stag":
-#             print("Stag")
-#         elif ticket_type == "Couple":
-#             img = late_couple
-#         qr.add_data(qr_string)
-#         qr.make()
-#         img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
-#         pos = (1440, 90)
-#         img.paste(img_qr, pos)
-#         stream = BytesIO()
-#         img.save(stream, format='JPEG')
-#         file_metadata = {'name': f"{response_id}.jpeg", 'parents': ['1E-MPKuk-RNKYiBRuUQAOt5vXtRLFT4Si']}
-#         media = MediaIoBaseUpload(stream, mimetype='image/jpeg', )
-#         file = drive_service.files().create(body=file_metadata, media_body=media,
-#                                             fields='id').execute()
-#         # print(F'File ID: {file.get("id")}')
-#         return {"message": "QR Generated successfully! ", "status": 200}
-#     except Exception as e:
-#         print(e)
-#         return {"message": "Unexpected error occurred", "status": 503}
-#
+
+@app.get("/generate-qr")
+def new_qr(response_id: str):
+    print(os.getcwd())
+    try:
+        qr = qrcode.QRCode(box_size=14)
+        qr_string = response_id
+        img = late_stag
+        qr.add_data(qr_string)
+        qr.make()
+        img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
+        pos = (1440, 90)
+        img.paste(img_qr, pos)
+        stream = BytesIO()
+        img.save(stream, format='JPEG')
+        file_metadata = {'name': f"{response_id}.jpeg", 'parents': ['1UWHUeV4-DW0d6ihMGYaxu_bnGKN1IXT8']}
+        media = MediaIoBaseUpload(stream, mimetype='image/jpeg', )
+        file = drive_service.files().create(body=file_metadata, media_body=media,
+                                            fields='id').execute()
+        # print(F'File ID: {file.get("id")}')
+        return {"message": "QR Generated successfully! ", "status": 200}
+    except Exception as e:
+        print(e)
+        return {"message": "Unexpected error occurred", "status": 503}
+
 #
 # @app.get("/generate-qr/early")
 # def new_qr(response_id: str, ticket_type: str):
