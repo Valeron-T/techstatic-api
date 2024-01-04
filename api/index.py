@@ -44,7 +44,9 @@ late_stag = Image.open(requests.get(
 late_couple = Image.open(requests.get(
     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-couple.jpg",
     stream=True).raw)
-
+ticket = Image.open(requests.get(
+    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/tech-ticket.jpg",
+    stream=True).raw)
 
 @app.get("/")
 def hello():
@@ -63,7 +65,7 @@ def new_qr(response_id: str):
     try:
         qr = qrcode.QRCode(box_size=14)
         qr_string = response_id
-        img = late_stag
+        img = ticket
         qr.add_data(qr_string)
         qr.make()
         img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
