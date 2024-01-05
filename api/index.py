@@ -63,7 +63,7 @@ def hello():
 def new_qr(response_id: str):
     print(os.getcwd())
     try:
-        qr = qrcode.QRCode(box_size=11)
+        qr = qrcode.QRCode(box_size=10)
         qr_string = response_id
         img = ticket
         qr.add_data(qr_string)
