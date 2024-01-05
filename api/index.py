@@ -63,13 +63,13 @@ def hello():
 def new_qr(response_id: str):
     print(os.getcwd())
     try:
-        qr = qrcode.QRCode(box_size=12)
+        qr = qrcode.QRCode(box_size=10)
         qr_string = response_id
         img = ticket
         qr.add_data(qr_string)
         qr.make()
         img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
-        pos = (1200, 80)
+        pos = (1200, 70)
         img.paste(img_qr, pos)
         stream = BytesIO()
         img.save(stream, format='JPEG')
