@@ -4,7 +4,8 @@ from io import BytesIO
 import requests
 from fastapi import FastAPI, Response
 from fastapi.staticfiles import StaticFiles
-from PIL import Image
+from PIL import Image, ImageDraw, ImageFont
+from urllib.request import urlopen  # Import for downloading the font
 from oauth2client.service_account import ServiceAccountCredentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -31,6 +32,11 @@ drive_service = build('drive', 'v3', credentials=credentials)
 sheets_service = build('sheets', 'v4', credentials=credentials)
 
 spreadsheet_id = '1Cj44xd3LXJT2oNkJzb_MPl2Ba9zjTL5vR4c4K8R-nuA'
+
+# Download the font from the remote URL
+font_url = "https://github.com/Valeron-T/discord-webhook-test/raw/3ea64ef3adc5591b614390a20a4198c8c2a916a7/font.otf"  # Replace with actual URL
+with urlopen(font_url) as font_file:
+    font_bytes = font_file.read()
 
 early_stag = Image.open(requests.get(
     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-stag.jpg",
@@ -60,7 +66,7 @@ def hello():
 
 
 @app.get("/generate-qr")
-def new_qr(response_id: str):
+def new_qr(response_id: str, name: str, venue: str):
     print(os.getcwd())
     try:
         qr = qrcode.QRCode(box_size=10)
@@ -68,11 +74,28 @@ def new_qr(response_id: str):
         img = ticket
         qr.add_data(qr_string)
         qr.make()
+
+        # Create a drawing object on the base image
+        draw = ImageDraw.Draw(img)
+
+        # Create a font object from the downloaded font data
+        font = ImageFont.truetype(BytesIO(font_bytes), 32)  # Adjust font size as needed
+
+        # Calculate text positions based on image dimensions and content
+        _, _, text_width, text_height = draw.textbbox((0, 0), name, font=font) 
+
+        name_x = (img.width - text_width) / 3.5
+        name_y = ((img.width - text_width) / 4) + 20  # Adjust spacing as needed
+        venue_y = name_y - text_height - 10  # Adjust spacing as needed
+
         img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
         pos = (1200, 60)
         img.paste(img_qr, pos)
         stream = BytesIO()
+        draw.text((name_x, name_y), f"Name: {name}", font=font, fill="white")
+        draw.text((name_x, venue_y), f"Venue: {venue}", font=font, fill="white")
         img.save(stream, format='JPEG')
+
         file_metadata = {'name': f"{response_id}.jpeg", 'parents': ['1UWHUeV4-DW0d6ihMGYaxu_bnGKN1IXT8']}
         media = MediaIoBaseUpload(stream, mimetype='image/jpeg', )
         file = drive_service.files().create(body=file_metadata, media_body=media,
