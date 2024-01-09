@@ -22,7 +22,7 @@ app = FastAPI()
 
 # cred = open(rf'{os.getcwd()}\creds.json')
 # cred_dict = json.load(cred)
-print(os.environ.get('CREDS'))
+# print(os.environ.get('CREDS'))
 cred_dict = json.loads(os.environ.get('CREDS'))
 
 credentials = ServiceAccountCredentials.from_json_keyfile_dict(cred_dict,
@@ -34,22 +34,18 @@ sheets_service = build('sheets', 'v4', credentials=credentials)
 spreadsheet_id = '1Cj44xd3LXJT2oNkJzb_MPl2Ba9zjTL5vR4c4K8R-nuA'
 
 # Download the font from the remote URL
-font_url = "https://github.com/Valeron-T/discord-webhook-test/raw/3ea64ef3adc5591b614390a20a4198c8c2a916a7/font.otf"  # Replace with actual URL
-with urlopen(font_url) as font_file:
-    font_bytes = font_file.read()
+font_url_league = "https://valeron-t.github.io/discord-webhook-test/LeagueGothic-Regular.ttf"  # Replace with actual URL
+with urlopen(font_url_league) as font_file_l:
+    font_bytes_league = font_file_l.read()
+    
+# Download the font from the remote URL
+font_url_poppins = "https://valeron-t.github.io/discord-webhook-test/Poppins-Regular.ttf"  # Replace with actual URL
+with urlopen(font_url_poppins) as font_file_p:
+    font_bytes_poppins = font_file_p.read()
 
-early_stag = Image.open(requests.get(
-    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-stag.jpg",
-    stream=True).raw)
-early_couple = Image.open(requests.get(
-    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/early-couple.jpg",
-    stream=True).raw)
-late_stag = Image.open(requests.get(
-    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-stag.jpg",
-    stream=True).raw)
-late_couple = Image.open(requests.get(
-    "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/63d309d098305ccf1dd1e52477a98c83a47cb798/late-couple.jpg",
-    stream=True).raw)
+print("error")
+
+
 ticket = Image.open(requests.get(
     "https://raw.githubusercontent.com/Valeron-T/discord-webhook-test/main/tech-ticket.jpg",
     stream=True).raw)
@@ -66,10 +62,10 @@ def hello():
 
 
 @app.get("/generate-qr")
-def new_qr(response_id: str, name: str, venue: str):
+def new_qr(response_id: str, name: str, venue: str, date:str):
     print(os.getcwd())
     try:
-        qr = qrcode.QRCode(box_size=10)
+        qr = qrcode.QRCode(box_size=13)
         qr_string = response_id
         img = ticket
         qr.add_data(qr_string)
@@ -79,21 +75,27 @@ def new_qr(response_id: str, name: str, venue: str):
         draw = ImageDraw.Draw(img)
 
         # Create a font object from the downloaded font data
-        font = ImageFont.truetype(BytesIO(font_bytes), 32)  # Adjust font size as needed
+        league = ImageFont.truetype(BytesIO(font_bytes_league), 130)  # Adjust font size as needed
+        poppins = ImageFont.truetype(BytesIO(font_bytes_poppins), 48)  # Adjust font size as needed
 
         # Calculate text positions based on image dimensions and content
-        _, _, text_width, text_height = draw.textbbox((0, 0), name, font=font) 
+        _, _, text_width, text_height = draw.textbbox((0, 0), name, font=league) 
+        _, _, text_width_poppins, text_height_poppins = draw.textbbox((0, 0), venue, font=poppins) 
 
-        name_x = (img.width - text_width) / 3.5
-        name_y = ((img.width - text_width) / 4) + 20  # Adjust spacing as needed
-        venue_y = name_y - text_height - 10  # Adjust spacing as needed
+        name_x = (img.width - text_width) / 4.5
+        name_y = (img.width - text_width) / 6  # Adjust spacing as needed
+        date_y = name_y + text_height +20  # Adjust spacing as needed
+        venue_y = date_y + text_height_poppins + 30  # Adjust spacing as needed
+        date_x = name_x + 1.25 * name_x
+        print(name_x, name_y, venue_y, date_y, text_width, text_height)
 
         img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
-        pos = (1200, 60)
+        pos = (1500, 70)
         img.paste(img_qr, pos)
         stream = BytesIO()
-        draw.text((name_x, name_y), f"Name: {name}", font=font, fill="white")
-        draw.text((name_x, venue_y), f"Venue: {venue}", font=font, fill="white")
+        draw.text((name_x-40, name_y), f"{name.upper()}", font=league, fill="white", align="center")
+        draw.text((date_x+60, date_y), f"{date.upper()}", font=poppins, fill="white", align="center")
+        draw.text((date_x+100, venue_y), f"{venue.upper()}", font=poppins, fill="white", align="center")
         img.save(stream, format='JPEG')
 
         file_metadata = {'name': f"{response_id}.jpeg", 'parents': ['1UWHUeV4-DW0d6ihMGYaxu_bnGKN1IXT8']}
