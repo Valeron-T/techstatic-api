@@ -82,20 +82,20 @@ def new_qr(response_id: str, name: str, venue: str, date:str):
         _, _, text_width, text_height = draw.textbbox((0, 0), name, font=league) 
         _, _, text_width_poppins, text_height_poppins = draw.textbbox((0, 0), venue, font=poppins) 
 
-        name_x = (img.width - text_width) / 4.5
-        name_y = (img.width - text_width) / 6  # Adjust spacing as needed
-        date_y = name_y + text_height +20  # Adjust spacing as needed
-        venue_y = date_y + text_height_poppins + 30  # Adjust spacing as needed
-        date_x = name_x + 1.25 * name_x
+        name_x = (img.width - text_width) / 3.5
+        name_y = (img.width - text_width) / 7.5  # Adjust spacing as needed
+        date_y = name_y + text_height +30  # Adjust spacing as needed
+        venue_y = date_y + text_height_poppins + 20  # Adjust spacing as needed
+        date_x = name_x + 0.25 * name_x
         print(name_x, name_y, venue_y, date_y, text_width, text_height)
 
         img_qr = qr.make_image(fill_color="black", back_color="#E6E6FA")
         pos = (1500, 70)
         img.paste(img_qr, pos)
         stream = BytesIO()
-        draw.text((name_x-40, name_y), f"{name.upper()}", font=league, fill="white", align="center")
-        draw.text((date_x+60, date_y), f"{date.upper()}", font=poppins, fill="white", align="center")
-        draw.text((date_x+100, venue_y), f"{venue.upper()}", font=poppins, fill="white", align="center")
+        draw.text((name_x, name_y), f"{name.upper()}", font=league, fill="white", align="center")
+        draw.text((date_x-10, date_y), f"{date.upper()}", font=poppins, fill="white", align="center")
+        draw.text((date_x-30, venue_y), f"{venue.upper()}", font=poppins, fill="white", align="center")
         img.save(stream, format='JPEG')
 
         file_metadata = {'name': f"{response_id}.jpeg", 'parents': ['1UWHUeV4-DW0d6ihMGYaxu_bnGKN1IXT8']}
